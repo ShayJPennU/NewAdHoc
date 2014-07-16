@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model name="pu:contentmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+<description>Penn United Technology Content Model For new Adhoc Process</description>
+<author>Jacob Paul Shay</author>
+<version>1.0</version>
+
+<imports>
+	<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+	<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+</imports>
+
+	<namespaces>
+		<namespaces uri="http://www.alfresco.org/model/workflow/1.0" prefix="putcm"/>
+	</namespaces>
+
+	<constraints>
+		<constraint name="putcm:docTypeList" type="List">
+			<title>Document Type List</title>
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Engineering Drawing</value>
+					<value>Note</value>
+					<value>Order Acknowledgement</value>
+					<value>Quote</value>
+					<value>Work Order</value>
+					<value>Other</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive"></parameter>
+		</constraint>
+	</constraints>
+	
+	<types>
+		<type name="putcm:baseDoc">
+			<title>Penn United Base Document Type</title>
+			<parent>cm:content</parent>
+			<archive>true</archive>
+			<properties>
+				<property name="putcm:wo_customer_name">
+					<title>Customer Name</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="putcm:wo_inventory_part_id">
+					<title>Work Order Inventory Part ID</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="putcm:wo_number">
+					<title>Work Order Number/ID</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="putcm:docType">
+					<title>Document Type</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default></default>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>cm:author</aspect>
+				<aspect>cm:title</aspect>
+				<aspect>cm:auditable</aspect>
+			</mandatory-aspects>
+		</type>
+	
+	<type name="putcm:miscdoc">
+		<title>Penn United Miscellaneous Document Type</title>
+		<parent>putcm:baseDoc</parent>
+		<archive>true</archive>
+		<overrides>
+			<property name="putcm:docType">
+				<default></default>
+				<constraints>
+					<constraint ref="putcm:docTypeList" />
+				</constraints>
+			</property>
+		</overrides>
+	</type>
+	
+	<type name="putcm:engdoc">
+		<title>Penn United Engineering Document Type</title>
+		<parent>putcm:baseDoc</parent>
+		<archive>true</archive>
+		<properties>
+			<property name="putcm:eng_drawing_file_name">
+				<title>Drawing File Name</title>
+				<type>d:text</type>
+			</property>
+			<property name="putcm:eng_drawing_revision">
+				<title>Work Order Drawing Revision</title>
+				<type>d:text</type>
+			</property>
+		</properties>
+		<overrides>
+			<property name="putcm:docType">
+				<default>Engineering Drawing</default>
+			</property>
+		</overrides>
+	</type>
+	
+	<type name="putcm:workorder">
+		<title>Penn United Work Order Sheet Document Type</title>
+		<parent>put:baseDoc</parent>
+		<archive>true</archive>
+		<properties>
+			<property name="putcm:wo_customer_order_number">
+				<title>Customer Order Number</title>
+				<type>d:text</type>
+			</property>
+			<property name="putcm:wo_customer_purchase_order">
+				<title>Customer Purchase Order</title>
+				<type>d:text</type>
+			</property>
+			<property name="putcm:wo_quantity">
+				<title>Quantity</title>
+				<type>d:double</type>
+			</property>
+			<property name="putcm:wo_release_date">
+				<title>Work Order Release Date</title>
+				<type>d:datetime</type>
+			</property>
+		</properties>
+		<overrides>
+			<property name="putcm:docType">
+				<default>Work Order</default>
+			</property>
+		</overrides>
+		</type>
+	</types>
+
+
+<aspect name="putcm:customer_information">
+	<title>Customer Information</title>
+	<properties>
+		<!-- Customer Information -->
+		<property name="putcm:customer_address1">
+			<title>Customer Address1</title>
+			<type>d:text</type>
+		</property>
+		<property name="putcm:customer_address2">
+			<title>Customer Address2</title>
+			<type>d:text</type>
+		</property>
+		<property name="putcm:customer_city">
+			<title>Customer State</title>
+			<type>d:text</type>
+		</property>
+		<property name="putcm:customer_zip">
+			<title>Customer Zip</title>
+			<type>d:text</type>
+		</property>
+	</properties>
+</aspect>
+
+</model>
