@@ -1,0 +1,15 @@
+<alfresco-config>
+
+	<config>
+		<forms>
+			<default-controls>
+				<type name="datetime" template="/org/alfresco/components/form/controls/date.ftl">
+					<control-param name="showTime">false</control-param>
+				</type>
+			</default-controls>
+		</forms>
+	</config>
+	
+	
+
+</alfresco-config>
