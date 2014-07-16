@@ -25,11 +25,17 @@
 	      </constraint>
    		</constraints>
 
-
-
 	<types>
 		<type name = "wf:startEvent1">
 			<parent>bpm:startTask</parent>
+			<overrides>
+				<property name="bpm:priority">
+					<default>3</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>putwf:productCodeInfo</aspect>
+			</mandatory-aspects>
 			<properties>
 				<property name="wf:notifyMe">
 					<type>d:boolean</type>
@@ -52,7 +58,7 @@
 		</type>
 	
 		<type name="wf:Engineering">
-			<parent>bpm:workflowTask</parent>
+			<parent>wf:activitiReviewTask</parent>
 			<properties>
 				<property name="wf:engineerOutcomeOptions">
 					<type>d:text</type>
@@ -72,7 +78,7 @@
 		</type>
 		
 		<type name="wf:FrontOffice">
-			<parent>bpm:workflowTask</parent>
+			<parent>wf:activitiReviewTask</parent>
 			<properties>
 				<property name="wf:FrontOfficeOutcome">
 					<type>d:text</type>
@@ -90,7 +96,7 @@
 		</type>
 		
 		<type name="wf:MaterialOrder">
-			<parent>bpm:workflowTask</parent>
+			<parent>wf:activitiReviewTask</parent>
 			<properties>
 				<property name="wf:MaterialOrder">
 					<type>d:text</type>
