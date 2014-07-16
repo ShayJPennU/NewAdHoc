@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+ 
+ 
+  <process id="NewAdhoc" name="Adhov Improved" isExecutable="true">
+    <startEvent id="sartEvent1" name="startEvent1" activiti:formKey="wf:submitAdhocTask">
+   
+   		<extensionElements>
+		<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+			<activiti:field name="script">
+				<activiti:string>
+				if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+				</activiti:string>
+			</activiti:field>
+		</activiti:taskListener>
+		</extensionElements>
+    </startEvent>
+    
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow1" name="Sent to Engineering" sourceRef="sartEvent1" targetRef="exclusivegateway1"></sequenceFlow>
+    <userTask id="Engineering" name="Engineering" activiti:formKey="wf:adhocTask">
+   	<extensionElements>
+		<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+			<activiti:field name="script">
+				<activiti:string>
+				if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+				</activiti:string>
+			</activiti:field>
+		</activiti:taskListener>
+	</extensionElements>
+  	<humanPerformer>
+	<resourceAssignmentExpression>
+	<formalExpression>${bpm_assignee.properties.userName}</formalExpression>
+	</resourceAssignmentExpression>
+	</humanPerformer>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="exclusivegateway1" targetRef="Engineering"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow3" sourceRef="Engineering" targetRef="exclusivegateway2"></sequenceFlow>
+    <userTask id="FrontOffice" name="FrontOffice" activiti:formKey="wf:activitiReviewTask">
+    	<documentation>Verify the arbitrary task was completed.</documentation>
+		<extensionElements>
+			<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+				<activiti:field name="script">
+					<activiti:string>
+						if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate 
+						if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority; 
+						if (wf_notifyMe) { var mail = actions.create("mail"); mail.parameters.to = initiator.properties.email; 
+						mail.parameters.subject = "Adhoc Task " + bpm_workflowDescription; 
+						mail.parameters.from = bpm_assignee.properties.email; 
+						mail.parameters.text = "It's done"; mail.execute(bpm_package); }
+					</activiti:string>
+				</activiti:field>
+			</activiti:taskListener>
+		</extensionElements>
+		<humanPerformer>
+			<resourceAssignmentExpression>
+				<formalExpression>
+					${initiator.exists() ? initiator.properties.userName : 'admin'}
+				</formalExpression>
+			</resourceAssignmentExpression>
+		</humanPerformer>
+    </userTask>
+    <sequenceFlow id="flow4" sourceRef="exclusivegateway2" targetRef="FrontOffice"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow6" name="Enginners send back " sourceRef="exclusivegateway2" targetRef="sartEvent1"></sequenceFlow>
+    <userTask id="MaterialOrder" name="MaterialOrder" activiti:formKey="wf:adhocTask"></userTask>
+    <sequenceFlow id="flow7" name="Operations sends work order to get materials orderd" sourceRef="exclusivegateway1" targetRef="MaterialOrder"></sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="MaterialOrder" targetRef="sartEvent1"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow9" sourceRef="FrontOffice" targetRef="exclusivegateway3"></sequenceFlow>
+    <sequenceFlow id="flow10" sourceRef="exclusivegateway3" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow11" sourceRef="exclusivegateway3" targetRef="Engineering"></sequenceFlow>
+  </process>
+ 
+  <bpmndi:BPMNDiagram id="BPMNDiagram_NewAdhoc">
+    <bpmndi:BPMNPlane bpmnElement="NewAdhoc" id="BPMNPlane_NewAdhoc">
+      <bpmndi:BPMNShape bpmnElement="sartEvent1" id="BPMNShape_sartEvent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="10.0" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="90.0" y="197.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Engineering" id="BPMNShape_Engineering">
+        <omgdc:Bounds height="55.0" width="105.0" x="170.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="330.0" y="197.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FrontOffice" id="BPMNShape_FrontOffice">
+        <omgdc:Bounds height="55.0" width="105.0" x="410.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="560.0" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="MaterialOrder" id="BPMNShape_MaterialOrder">
+        <omgdc:Bounds height="55.0" width="105.0" x="58.0" y="340.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="442.0" y="111.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="45.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="90.0" y="217.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="70.0" y="177.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="130.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="170.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="275.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="370.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="410.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="350.0" y="197.0"></omgdi:waypoint>
+        <omgdi:waypoint x="349.0" y="115.0"></omgdi:waypoint>
+        <omgdi:waypoint x="206.0" y="115.0"></omgdi:waypoint>
+        <omgdi:waypoint x="27.0" y="115.0"></omgdi:waypoint>
+        <omgdi:waypoint x="27.0" y="200.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="42.0" width="100.0" x="131.0" y="71.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="110.0" y="237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="340.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="56.0" width="100.0" x="41.0" y="258.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="58.0" y="367.0"></omgdi:waypoint>
+        <omgdi:waypoint x="27.0" y="357.0"></omgdi:waypoint>
+        <omgdi:waypoint x="27.0" y="235.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="462.0" y="190.0"></omgdi:waypoint>
+        <omgdi:waypoint x="462.0" y="151.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="482.0" y="131.0"></omgdi:waypoint>
+        <omgdi:waypoint x="577.0" y="131.0"></omgdi:waypoint>
+        <omgdi:waypoint x="577.0" y="200.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="442.0" y="131.0"></omgdi:waypoint>
+        <omgdi:waypoint x="253.0" y="130.0"></omgdi:waypoint>
+        <omgdi:waypoint x="222.0" y="190.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

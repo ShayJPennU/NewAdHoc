@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bean id="NewAdhoc.workflowDefinitions">
+	<property name = "workflowDefinitions">
+		<list>
+			<props>
+				<prop key="engineID">activiti</prop>
+				<prop key="location">alfresco/extension/workflow/NewAdHoc.bpmn20.xml</prop>
+				<prop key="mimetype">test/xml</prop>
+				<prop key="redeploy">true</prop>
+			</props>
+		</list>
+	</property>
+	<property name="models">
+		<list>
+		<!-- Task Model associated with above process definition -->
+			<value>alfresco/extension/model/NewAdHoc-Task-Model.xml</value>
+		</list>
+	</property>
+
+
+</bean>
